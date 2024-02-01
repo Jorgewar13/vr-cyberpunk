@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Ciudad Cyberpunk</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.2.0/dist/aframe-environment-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-gltf-model-component@1.2.0/dist/aframe-gltf-model-component.min.js"></script>
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v6.1.0/dist/aframe-extras.min.js"></script>
+    <script src="https://unpkg.com/aframe-html-shader"></script>
+</head>
+
+<body>
+    <a-assets>
+        <!-- Sonido -->
+        <audio id="sound" src="assets/audios/eso-tilin.mp3"></audio>
+    </a-assets>
+
+    <a-scene rotation="0 90 0">
+
+        <!-- Entorno urbano -->
+        <a-entity environment="preset: urban"></a-entity>
+
+        <!-- Ciudad -->
+        <a-entity gltf-model="assets/ciudad/scene.gltf" position="0 0 0" scale="100 100 100"></a-entity>
+
+        <!-- Luces ambientales -->
+        <a-entity light="type: ambient; color: #ccc"></a-entity>
+        <a-entity light="type: point; intensity: 2;"></a-entity>
+
+        <!-- Cielo  -->
+        <a-sky src="assets/istockphoto-1343302182-612x612.jpg"></a-sky>
+
+        <!-- Personajes animados -->
+        <a-entity position="15 9 3" scale="0.70 0.70 0.70">
+            <a-entity rotation="0 270 0">
+                <a-entity gltf-model="assets/personas/scene.gltf" animation-mixer="clip: *;"
+                    sound="src: #sound; on: click;"></a-entity>
+            </a-entity>
+        </a-entity>
+
+        <!-- Terminal -->
+        <a-entity gltf-model="assets/terminal/scene.gltf" position="24.5 10 15" scale="0.6 0.6 0.6" rotation="0 180 0"
+            animation-mixer="clip:*;"></a-entity>
+
+        <!-- Tienda -->
+        <a-entity gltf-model="assets/tienda/scene.gltf" position="17 9 10" scale="1.00 1.00 1.00" rotation="0 270 0"
+            animation-mixer="clip: *;"></a-entity>
+
+        <!-- Android -->
+        <a-entity gltf-model="assets/avatars/android_robot.glb" position="19 9 15" scale="8.5 8.5 8.5" rotation="0 -90 0"
+            animation-mixer="clip: *;" ></a-entity>
+
+        <!-- Robi -->
+        <a-entity gltf-model="assets/avatars/animated_robot.glb" position="3 9 -5" scale="0.5 0.5 0.5" rotation="0 0 0"
+            animation-mixer="clip: Robot_Wave;" interactive-text="text: Ese robot verde sea ha escondido de mi, me suena de algo pero no logro saber de donde? ; offset: 1.5 1.5 0;"></a-entity>
+
+        <!-- Controlador de cámara con cursor -->
+        <a-entity camera look-controls wasd-controls cursor="rayOrigin: mouse;" position="0 10 0"></a-entity>
+    </a-scene>
+
+    <script>
+        AFRAME.registerComponent('interactive-text', {
+            schema: {
+                text: { type: 'string', default: '' },
+                offset: { type: 'vec3', default: { x: 0, y: 0, z: 0 } }
+            },
+
+            init: function () {
+                var el = this.el;
+                var data = this.data;
+                var htmlEntity = document.createElement('a-entity');
+                var htmlString = '<a-plane color="white" width="auto" height="auto" position="'
+                    + data.offset.x + ' ' + data.offset.y + ' ' + data.offset.z
+                    + '" html-shader="target: #html-container; textureWidth: 512; textureHeight: auto;"></a-plane>'
+                    + '<a-entity position="' + (data.offset.x + 1.5) + ' ' + (data.offset.y + 0.5) + ' ' + (data.offset.z - 0.5)
+                    + '" text="value: ' + data.text + '; color: black; width: 2; align: center; wrapCount: 30;"></a-entity>';
+
+                htmlEntity.setAttribute('position', el.getAttribute('position'));
+                htmlEntity.innerHTML = htmlString;
+                el.sceneEl.appendChild(htmlEntity);
+            }
+        });
+    </script>
+</body>
+
+</html>
